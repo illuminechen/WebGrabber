@@ -1,0 +1,14 @@
+名稱	body > div.content > div.place > div > div.placr_details_infor > h1	
+地址	body > div.content > div.place > div > div.placr_details_infor > ul > li:nth-child(1)	
+電話	body > div.content > div.place > div > div.placr_details_infor > ul > li:nth-child(2)	
+電子郵件	body > div.content > div.place > div > div.placr_details_infor > ul > li:nth-child(3)	
+類別屬性	body > div.content > div.place > div > div.placr_details_infor > ul > li:nth-child(4)	
+輔導	body > div.content > div.place > div > div.special-show > ul > li:nth-child(1)	class=select-item
+有舉辦活動或課程	body > div.content > div.place > div > div.special-show > ul > li:nth-child(2)	class=select-item
+可獲得投資機會	body > div.content > div.place > div > div.special-show > ul > li:nth-child(3)	class=select-item
+場地外借	body > div.content > div.place > div > div.special-show > ul > li:nth-child(4)	class=select-item
+可進駐	body > div.content > div.place > div > div.special-show > ul > li:nth-child(5)	class=select-item
+創業家簽證認可	body > div.content > div.place > div > div.special-show > ul > li:nth-child(6)	class=select-item
+政府單位營運	body > div.content > div.place > div > div.special-show > ul > li:nth-child(7)	class=select-item
+績優推薦	body > div.content > div.place > div > div.special-show > ul > li:nth-child(8)	class=select-item
+簡介	body > div.content > div.place > div > div:nth-child(5) > div.html > div	
