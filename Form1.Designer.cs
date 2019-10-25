@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -48,6 +49,7 @@
             this.欄位名稱 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CSS_Selector = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.條件 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.屬性 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
@@ -56,8 +58,8 @@
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -72,7 +74,6 @@
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -104,9 +105,9 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.richTextBox3);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
             this.splitContainer1.Size = new System.Drawing.Size(1397, 753);
-            this.splitContainer1.SplitterDistance = 288;
+            this.splitContainer1.SplitterDistance = 297;
             this.splitContainer1.TabIndex = 2;
             // 
             // splitContainer2
@@ -122,7 +123,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1397, 288);
+            this.splitContainer2.Size = new System.Drawing.Size(1397, 297);
             this.splitContainer2.SplitterDistance = 365;
             this.splitContainer2.TabIndex = 1;
             // 
@@ -135,7 +136,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(365, 288);
+            this.panel1.Size = new System.Drawing.Size(365, 297);
             this.panel1.TabIndex = 0;
             // 
             // listBox1
@@ -146,7 +147,7 @@
             this.listBox1.Location = new System.Drawing.Point(0, 25);
             this.listBox1.Name = "listBox1";
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(341, 214);
+            this.listBox1.Size = new System.Drawing.Size(341, 223);
             this.listBox1.TabIndex = 1;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -188,7 +189,7 @@
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(341, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(24, 239);
+            this.toolStrip1.Size = new System.Drawing.Size(24, 248);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -208,7 +209,7 @@
             this.panel2.Controls.Add(this.richTextBox1);
             this.panel2.Controls.Add(this.button1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 239);
+            this.panel2.Location = new System.Drawing.Point(0, 248);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(365, 49);
             this.panel2.TabIndex = 0;
@@ -244,12 +245,8 @@
             // 
             this.splitContainer3.Panel1.Controls.Add(this.panel3);
             this.splitContainer3.Panel1.Controls.Add(this.toolStrip2);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
             this.splitContainer3.Panel2Collapsed = true;
-            this.splitContainer3.Size = new System.Drawing.Size(1028, 288);
+            this.splitContainer3.Size = new System.Drawing.Size(1028, 297);
             this.splitContainer3.SplitterDistance = 204;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -259,7 +256,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 25);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1028, 263);
+            this.panel3.Size = new System.Drawing.Size(1028, 272);
             this.panel3.TabIndex = 1;
             // 
             // dataGridView1
@@ -268,12 +265,13 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.欄位名稱,
             this.CSS_Selector,
-            this.條件});
+            this.條件,
+            this.屬性});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1028, 263);
+            this.dataGridView1.Size = new System.Drawing.Size(1028, 272);
             this.dataGridView1.TabIndex = 0;
             // 
             // 欄位名稱
@@ -291,6 +289,11 @@
             // 
             this.條件.HeaderText = "條件";
             this.條件.Name = "條件";
+            // 
+            // 屬性
+            // 
+            this.屬性.HeaderText = "屬性";
+            this.屬性.Name = "屬性";
             // 
             // toolStrip2
             // 
@@ -364,9 +367,9 @@
             // 
             // splitContainer4.Panel2
             // 
-            this.splitContainer4.Panel2.Controls.Add(this.richTextBox2);
-            this.splitContainer4.Size = new System.Drawing.Size(150, 46);
-            this.splitContainer4.SplitterDistance = 73;
+            this.splitContainer4.Panel2.Controls.Add(this.richTextBox3);
+            this.splitContainer4.Size = new System.Drawing.Size(1397, 452);
+            this.splitContainer4.SplitterDistance = 367;
             this.splitContainer4.TabIndex = 0;
             // 
             // webBrowser1
@@ -376,27 +379,24 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(73, 46);
-            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Size = new System.Drawing.Size(367, 452);
+            this.webBrowser1.TabIndex = 1;
+            this.webBrowser1.Url = new System.Uri("", System.UriKind.Relative);
             this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
-            // 
-            // richTextBox2
-            // 
-            this.richTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox2.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(73, 46);
-            this.richTextBox2.TabIndex = 0;
-            this.richTextBox2.Text = "";
             // 
             // richTextBox3
             // 
             this.richTextBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox3.Location = new System.Drawing.Point(0, 0);
             this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(1397, 461);
-            this.richTextBox3.TabIndex = 1;
+            this.richTextBox3.Size = new System.Drawing.Size(1026, 452);
+            this.richTextBox3.TabIndex = 2;
             this.richTextBox3.Text = "";
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 3000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -407,7 +407,9 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "WebGrabber";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -425,7 +427,6 @@
             this.panel2.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel1.PerformLayout();
-            this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
@@ -454,23 +455,24 @@
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.RichTextBox richTextBox2;
-        private System.Windows.Forms.RichTextBox richTextBox3;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 欄位名稱;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CSS_Selector;
-        private System.Windows.Forms.DataGridViewTextBoxColumn 條件;
         private System.Windows.Forms.ToolStripButton toolStripButton5;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ToolStrip toolStrip3;
         private System.Windows.Forms.ToolStripButton toolStripButton6;
         private System.Windows.Forms.ToolStripButton toolStripButton7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 欄位名稱;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CSS_Selector;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 條件;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 屬性;
+        private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.RichTextBox richTextBox3;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

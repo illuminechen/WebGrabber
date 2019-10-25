@@ -13,11 +13,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AngleSharp.Io;
 using Flurl.Http;
+using System.Diagnostics;
+using Microsoft.Win32;
+using System.Threading;
 
 namespace WebGrabber
 {
     public partial class Form1 : Form
     {
+        int current = 0;
+        int count = 0;
+        Dictionary<string, string> result = new Dictionary<string, string>();
+        List<compobj> FieldPat = new List<compobj>();
+        List<string> urllist = new List<string>();
         public Form1()
         {
             InitializeComponent();
@@ -28,6 +36,7 @@ namespace WebGrabber
             public string field;
             public string pattern;
             public string condition;
+            public string attr;
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -57,65 +66,6 @@ namespace WebGrabber
             //}
         }
 
-        private async void DoAsync(List<string> urllist, List<compobj> FieldPat)
-        {
-            int index = 0;
-            foreach (var item in urllist)
-            {
-                Dictionary<string, string> result = new Dictionary<string, string>();
-                try
-                {
-
-                    var resp = await item.ToString().WithTimeout(5).GetAsync().ReceiveString();
-
-                    var config = Configuration.Default.WithDefaultLoader();
-                    var context = BrowsingContext.New(config);
-
-                    var document = await context.OpenAsync(req => req.Content(resp));
-
-                    /*CSS Selector寫法*/
-                    foreach (var comp in FieldPat)
-                    {
-                        IElement tag = document.QuerySelector(comp.pattern);
-                        if (tag != null)
-                        {
-                            if (comp.condition.Trim() == "")
-                            {
-                                if (!result.ContainsKey(comp.field))
-                                    result.Add(comp.field, tag.TextContent.Replace("\n", "").Trim());
-                            }
-                            else
-                            {
-                                string[] conds = comp.condition.Split('=');
-                                if (tag.HasAttribute(conds[0]) && tag.GetAttribute(conds[0]) == conds[1])
-                                {
-                                    if (!result.ContainsKey(comp.field))
-                                        result.Add(comp.field, tag.TextContent.Replace("\n", "").Trim());
-                                }
-                                else
-                                {
-                                    if (!result.ContainsKey(comp.field))
-                                        result.Add(comp.field, " ");
-                                }
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-                finally
-                {
-                    richTextBox3.Invoke(new Action(() => { SetValue(result); }));
-                }
-
-            }
-
-
-
-        }
-
         private void SetValue(Dictionary<string, string> dict)
         {
             List<compobj> patterns = getFieldPattern();
@@ -138,8 +88,9 @@ namespace WebGrabber
                     string field = dgvr.Cells[0].Value.ToString();
                     string pattern = dgvr.Cells[1].Value.ToString();
                     string condition = dgvr.Cells[2].Value == null ? "" : dgvr.Cells[2].Value.ToString();
+                    string attr = dgvr.Cells[3].Value == null ? "" : dgvr.Cells[3].Value.ToString();
                     if (!string.IsNullOrWhiteSpace(field) && !string.IsNullOrWhiteSpace(pattern))
-                        result.Add(new compobj() { field = field, pattern = pattern, condition = condition });
+                        result.Add(new compobj() { field = field, pattern = pattern, condition = condition, attr = attr });
                 }
             }
             return result;
@@ -149,11 +100,16 @@ namespace WebGrabber
         {
             if (listBox1.SelectedItems.Count > 0)
             {
-                var complist = getFieldPattern();
-                richTextBox3.Text = string.Join("\t", complist.Select(x => x.field)) + "\n";
-                toolStripProgressBar1.Maximum = listBox1.SelectedItems.Count;
+                webBrowser1.Navigate("");
+                FieldPat = getFieldPattern();
+                richTextBox3.Text = string.Join("\t", FieldPat.Select(x => x.field)) + "\n";
+
+                current = listBox1.SelectedIndices[0];
+                count = listBox1.SelectedItems.Count;
+                toolStripProgressBar1.Maximum = count;
                 toolStripProgressBar1.Value = 0;
-                DoAsync(listBox1.SelectedItems.Cast<object>().Select(x => x.ToString()).ToList(), complist);
+                urllist = listBox1.SelectedItems.Cast<string>().ToList().Select(x => x.ToString()).ToList();
+                webBrowser1.Navigate(listBox1.SelectedItems[0].ToString());
             }
         }
 
@@ -161,17 +117,19 @@ namespace WebGrabber
         {
             if (listBox1.Items.Count > 0)
             {
-                var complist = getFieldPattern();
-                richTextBox3.Text = string.Join("\t", complist.Select(x => x.field)) + "\n";
-                toolStripProgressBar1.Maximum = listBox1.Items.Count;
-                toolStripProgressBar1.Value = 0;
-                DoAsync(listBox1.Items.Cast<object>().Select(x => x.ToString()).ToList(), complist);
-            }
-        }
+                webBrowser1.Navigate("");
+                FieldPat = getFieldPattern();
+                richTextBox3.Text = string.Join("\t", FieldPat.Select(x => x.field)) + "\n";
 
-        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            //richTextBox2.Text = webBrowser1.DocumentText;
+                current = 0;
+                count = listBox1.Items.Count;
+                toolStripProgressBar1.Maximum = count;
+                toolStripProgressBar1.Value = 0;
+
+                urllist = listBox1.Items.Cast<string>().ToList().Select(x => x.ToString()).ToList();
+
+                webBrowser1.Navigate(listBox1.Items[0].ToString());
+            }
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
@@ -183,7 +141,7 @@ namespace WebGrabber
             {
                 using (StreamWriter sw = new StreamWriter(sfd.FileName, false, Encoding.Default))
                 {
-                    sw.Write(string.Join("\n", complist.Select(x => x.field + "\t" + x.pattern + "\t" + x.condition)));
+                    sw.Write(string.Join("\n", complist.Select(x => x.field + "\t" + x.pattern + "\t" + x.condition + "\t" + x.attr)));
                 }
             }
         }
@@ -233,10 +191,118 @@ namespace WebGrabber
 
                     foreach (string line in str.Split('\n'))
                     {
-                        listBox1.Items.Add(line);
+                        if (line != "")
+                            listBox1.Items.Add(line);
                     }
                 }
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            int BrowserVer, RegVal;
+
+            // get the installed IE version
+            using (WebBrowser Wb = new WebBrowser())
+                BrowserVer = Wb.Version.Major;
+
+            // set the appropriate IE version
+            if (BrowserVer >= 11)
+                RegVal = 11001;
+            else if (BrowserVer == 10)
+                RegVal = 10001;
+            else if (BrowserVer == 9)
+                RegVal = 9999;
+            else if (BrowserVer == 8)
+                RegVal = 8888;
+            else
+                RegVal = 7000;
+
+            // set the actual key
+            using (RegistryKey Key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", RegistryKeyPermissionCheck.ReadWriteSubTree))
+                if (Key.GetValue(System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe") == null)
+                    Key.SetValue(System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe", RegVal, RegistryValueKind.DWord);
+        }
+
+        private async Task DoAsync()
+        {
+            try
+            {
+                result.Clear();
+
+                /*webBrowser1.Document.AttachEventHandler("onpropertychange", new EventHandler((ss, ee) => {
+                }));*/
+                var config = Configuration.Default.WithDefaultLoader();
+                var context = BrowsingContext.New(config);
+                string contenttext = webBrowser1.Document.Body.InnerHtml;
+                var document = await context.OpenAsync(req => req.Content(contenttext));
+                foreach (var comp in FieldPat)
+                {
+                    IElement tag = document.QuerySelector(comp.pattern);
+                    if (tag != null)
+                    {
+                        if (comp.condition.Trim() == "")
+                        {
+                            if (!result.ContainsKey(comp.field))
+                            {
+                                if (comp.attr == "")
+                                    result.Add(comp.field, tag.TextContent.Replace("\n", "").Trim());
+                                else
+                                    result.Add(comp.field, tag.GetAttribute(comp.attr).Replace("\n", "").Trim());
+                            }
+                        }
+                        else
+                        {
+                            string[] conds = comp.condition.Split('=');
+                            if (tag.HasAttribute(conds[0]) && tag.GetAttribute(conds[0]) == conds[1])
+                            {
+                                if (!result.ContainsKey(comp.field))
+                                {
+                                    if (comp.attr == "")
+                                        result.Add(comp.field, tag.TextContent.Replace("\n", "").Trim());
+                                    else
+                                        result.Add(comp.field, tag.GetAttribute(comp.attr).Replace("\n", "").Trim());
+                                }
+                            }
+                            else
+                            {
+                                if (!result.ContainsKey(comp.field))
+                                    result.Add(comp.field, " ");
+                            }
+                        }
+                    }
+                }
+
+                timer1.Enabled = false;
+                timer1.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            if (webBrowser1.Url.PathAndQuery == "blank") return;
+            DoAsync();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (current >= count - 1)
+            {
+                webBrowser1.Navigate("");
+            }
+            else
+            {
+                current++;
+                webBrowser1.Navigate(urllist[current]);
+                listBox1.SelectedIndex = -1;
+                listBox1.SelectedIndex = current;
+            }
+            richTextBox3.Invoke(new Action(() => { SetValue(result); }));
+            timer1.Enabled = false;
         }
     }
 }
