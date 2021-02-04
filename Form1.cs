@@ -31,12 +31,41 @@ namespace WebGrabber
             InitializeComponent();
         }
 
-        class compobj
+        public class compobj
         {
             public string field;
             public string pattern;
             public string condition;
             public string attr;
+
+            public string getContent(IElement tag)
+            {
+                if (condition.Trim() == "")
+                {
+                    if (attr == "")
+                        return tag.TextContent.Replace("\n", "").Trim();
+                    else
+                    {
+                        var attrContent = tag.GetAttribute(attr);
+                        if (attr != null)
+                            return attrContent.Replace("\n", "").Trim();
+                        else
+                            return " ";
+                    }
+                }
+                else
+                {
+                    string[] conds = condition.Split('=');
+                    if (tag.HasAttribute(conds[0]) && tag.GetAttribute(conds[0]) == conds[1])
+                    {
+                        if (attr == "")
+                            return tag.TextContent.Replace("\n", "").Trim();
+                        else
+                            return tag.GetAttribute(attr).Replace("\n", "").Trim();
+                    }
+                    return " ";
+                }
+            }
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -238,36 +267,19 @@ namespace WebGrabber
                 var document = await context.OpenAsync(req => req.Content(contenttext));
                 foreach (var comp in FieldPat)
                 {
-                    IElement tag = document.QuerySelector(comp.pattern);
-                    if (tag != null)
+                    var tags = document.QuerySelectorAll(comp.pattern);
+                    if (tags != null)
                     {
-                        if (comp.condition.Trim() == "")
+                        foreach (var tag in tags)
                         {
+                            var content = comp.getContent(tag);
                             if (!result.ContainsKey(comp.field))
                             {
-                                if (comp.attr == "")
-                                    result.Add(comp.field, tag.TextContent.Replace("\n", "").Trim());
-                                else
-                                    result.Add(comp.field, tag.GetAttribute(comp.attr).Replace("\n", "").Trim());
-                            }
-                        }
-                        else
-                        {
-                            string[] conds = comp.condition.Split('=');
-                            if (tag.HasAttribute(conds[0]) && tag.GetAttribute(conds[0]) == conds[1])
-                            {
-                                if (!result.ContainsKey(comp.field))
-                                {
-                                    if (comp.attr == "")
-                                        result.Add(comp.field, tag.TextContent.Replace("\n", "").Trim());
-                                    else
-                                        result.Add(comp.field, tag.GetAttribute(comp.attr).Replace("\n", "").Trim());
-                                }
+                                result.Add(comp.field, content);
                             }
                             else
                             {
-                                if (!result.ContainsKey(comp.field))
-                                    result.Add(comp.field, " ");
+                                result[comp.field] += "||" + content;
                             }
                         }
                     }
